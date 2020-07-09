@@ -1,36 +1,16 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
 
 import nltk
 import re
 import pawn
 
-
-# In[2]:
-
-
 pawn.language()
 pawn.set_language('ru')
 print(pawn.language())
 
-
-# In[3]:
-
-
 from pawn import wordnet as wnp
-
-
-# In[ ]:
-
 
 from nltk.corpus import wordnet_ic
 brown_ic = wnp.ic('ic-brown.dat') 
-
-
-# In[ ]:
 
 
 #Кнопаем для интерфейса
@@ -38,16 +18,8 @@ import sys
 # Импортируем наш интерфейс
 from interface23 import *
 from PyQt5 import QtCore, QtGui, QtWidgets
-
-
-# In[ ]:
-
-
 from cleaner import clean_text_by_sentences as clean
 from nltk.tokenize import sent_tokenize
-
-
-# In[ ]:
 
 
 class MyWin(QtWidgets.QMainWindow):
@@ -61,8 +33,6 @@ class MyWin(QtWidgets.QMainWindow):
         # adding actions to file menu
         close_action = QtWidgets.QAction('Закрыть', self)
         file_menu.addAction(close_action)
-
-        # use `connect` method to bind signals to desired behavior
         close_action.triggered.connect(self.close)
     
         self.ui.pushButton.clicked.connect(self.DomainCheck)   
@@ -75,6 +45,7 @@ class MyWin(QtWidgets.QMainWindow):
         dialog.ui.setupUi(dialog)
         dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         dialog.exec_()
+        
     # Пока пустая функция которая выполняется
     # при нажатии на кнопку                  
     def DomainCheck(self):
@@ -135,11 +106,10 @@ class MyWin(QtWidgets.QMainWindow):
             maximum = 0 
             maxJCN = 0
             flag = 0
-            for chain in lexical_chains: #for all chains that are present
+            for chain in lexical_chains: 
                 print(pawn.wordnet.synsets(word))
-                for synset in wnp.synsets(word): #for all synsets of current word
-                   
-                    for sense in chain.senses:  #for all senses of the current word in current element of the current chain #using wup_similarity 
+                for synset in wnp.synsets(word): 
+                    for sense in chain.senses: 
                         try:
                             similarity = sense.wup_similarity(synset)
                             if(similarity >= maximum):
@@ -161,13 +131,7 @@ class MyWin(QtWidgets.QMainWindow):
                 return    
             lexical_chains.append(Chain([word], wnp.synsets(word)))
 
-        
-        '''fileName = input("Enter file path + name, if file name is 'nlp.txt', type 'nlp' \n \n")
-        fileName += ".txt"
-        print ("\n\n")
-        #fileName = "nlp.txt"
-        File = open(fileName) #open file
-        lines = File.read() #read all lines '''
+       
         is_noun = lambda x: True if (x == 'NN' or x == 'NNP' or x == 'NNS' or x == 'NNPS'or x =='S') else False
         nouns = [word for (word, pos) in nltk.pos_tag(nltk.word_tokenize(lines),lang='rus') if is_noun(pos)and word!='—']#extract all nouns
 
@@ -180,12 +144,10 @@ class MyWin(QtWidgets.QMainWindow):
                 add_word(word)
 
         print('Chains')
-        #print all chains
         for chain in lexical_chains:
             print (", ".join(str(word + "(" + str(dictionary[word]) + ")") for word in chain.getWords()))
 
         print('Scoring Chains')
-        #print all chains
         for chain in lexical_chains:
             chain_length = 0
             dis_word = 0
@@ -223,7 +185,6 @@ class MyWin(QtWidgets.QMainWindow):
 
             bigword = chain.mfword()
             chain_score = chain.score
-            #print '\nMF word ', bigword
             for i in range(len(line_list)):
                 line=line_list[i]
                 print(bigword)
@@ -240,20 +201,13 @@ class MyWin(QtWidgets.QMainWindow):
                         #print 'i  ', count_words(summary)
                         line_flags[i] = 1
                         line_score[i] = chain_score
-                        #print 'line_score ', line_score
-                        #print 'line_flags ', line_flags
 
                         break
-                    #elif line_flags[i]==1:
-                        #line_score[i] = line_score[i] + chain.score
-                        #print '\nline_score ', line_score
-                    #print 'line_flags ', line_flags
+   
                 if(len(summary)>5):
                     break			
-
-
-        #print(' '.join(summary)[:600]+'...')
         self.ui.textEdit_2.setText(' '.join(summary)[:600]+'...')
+        
 if __name__=="__main__":
     app = QtWidgets.QApplication(sys.argv)
     myapp = MyWin()
